@@ -77,7 +77,7 @@ static void _scsih_pcie_device_remove_from_sml(struct MPT3SAS_ADAPTER *ioc,
 	struct _pcie_device *pcie_device);
 static void
 _scsih_pcie_check_device(struct MPT3SAS_ADAPTER *ioc, u16 handle);
-static u8 _scsih_check_for_pending_tm(struct MPT3SAS_ADAPTER *ioc, u16 smid);
+// static u8 _scsih_check_for_pending_tm(struct MPT3SAS_ADAPTER *ioc, u16 smid);
 static void _scsih_complete_devices_scanning(struct MPT3SAS_ADAPTER *ioc);
 
 /* global parameters */
@@ -2553,7 +2553,7 @@ scsih_slave_configure(struct scsi_device *sdev)
 		/*
 		 * WARPDRIVE: Initialize the required data for Direct IO
 		 */
-		mpt3sas_init_warpdrive_properties(ioc, raid_device);
+		// mpt3sas_init_warpdrive_properties(ioc, raid_device);
 
 		/* RAID Queue Depth Support
 		 * IS volume = underlying qdepth of drive type, either
@@ -3130,7 +3130,7 @@ mpt3sas_scsih_issue_tm(struct MPT3SAS_ADAPTER *ioc, u16 handle, uint channel,
 	mpt3sas_base_sync_reply_irqs(ioc, 0);
 
 	if (ioc->tm_cmds.status & MPT3_CMD_REPLY_VALID) {
-		mpt3sas_trigger_master(ioc, MASTER_TRIGGER_TASK_MANAGMENT);
+		// mpt3sas_trigger_master(ioc, MASTER_TRIGGER_TASK_MANAGMENT);
 		mpi_reply = ioc->tm_cmds.reply;
 		dtmprintk(ioc,
 			  ioc_info(ioc, "complete tm: ioc_status(0x%04x), loginfo(0x%08x), term_count(0x%08x)\n",
@@ -4192,7 +4192,7 @@ _scsih_tm_tr_send(struct MPT3SAS_ADAPTER *ioc, u16 handle)
 	mpi_request->MsgFlags = tr_method;
 	set_bit(handle, ioc->device_remove_in_progress);
 	ioc->put_smid_hi_priority(ioc, smid, 0);
-	mpt3sas_trigger_master(ioc, MASTER_TRIGGER_DEVICE_REMOVAL);
+	// mpt3sas_trigger_master(ioc, MASTER_TRIGGER_DEVICE_REMOVAL);
 
 out:
 	if (sas_device)
@@ -4217,80 +4217,80 @@ out:
  * Return: 1 meaning mf should be freed from _base_interrupt
  *         0 means the mf is freed from this function.
  */
-static u8
-_scsih_tm_tr_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
-	u32 reply)
-{
-	u16 handle;
-	Mpi2SCSITaskManagementRequest_t *mpi_request_tm;
-	Mpi2SCSITaskManagementReply_t *mpi_reply =
-	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
-	Mpi2SasIoUnitControlRequest_t *mpi_request;
-	u16 smid_sas_ctrl;
-	u32 ioc_state;
-	struct _sc_list *delayed_sc;
+// static u8
+// _scsih_tm_tr_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
+// 	u32 reply)
+// {
+// 	u16 handle;
+// 	Mpi2SCSITaskManagementRequest_t *mpi_request_tm;
+// 	Mpi2SCSITaskManagementReply_t *mpi_reply =
+// 	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
+// 	Mpi2SasIoUnitControlRequest_t *mpi_request;
+// 	u16 smid_sas_ctrl;
+// 	u32 ioc_state;
+// 	struct _sc_list *delayed_sc;
 
-	if (ioc->pci_error_recovery) {
-		dewtprintk(ioc,
-			   ioc_info(ioc, "%s: host in pci error recovery\n",
-				    __func__));
-		return 1;
-	}
-	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
-	if (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
-		dewtprintk(ioc,
-			   ioc_info(ioc, "%s: host is not operational\n",
-				    __func__));
-		return 1;
-	}
-	if (unlikely(!mpi_reply)) {
-		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
-			__FILE__, __LINE__, __func__);
-		return 1;
-	}
-	mpi_request_tm = mpt3sas_base_get_msg_frame(ioc, smid);
-	handle = le16_to_cpu(mpi_request_tm->DevHandle);
-	if (handle != le16_to_cpu(mpi_reply->DevHandle)) {
-		dewtprintk(ioc,
-			   ioc_err(ioc, "spurious interrupt: handle(0x%04x:0x%04x), smid(%d)!!!\n",
-				   handle,
-				   le16_to_cpu(mpi_reply->DevHandle), smid));
-		return 0;
-	}
+// 	if (ioc->pci_error_recovery) {
+// 		dewtprintk(ioc,
+// 			   ioc_info(ioc, "%s: host in pci error recovery\n",
+// 				    __func__));
+// 		return 1;
+// 	}
+// 	ioc_state = mpt3sas_base_get_iocstate(ioc, 1);
+// 	if (ioc_state != MPI2_IOC_STATE_OPERATIONAL) {
+// 		dewtprintk(ioc,
+// 			   ioc_info(ioc, "%s: host is not operational\n",
+// 				    __func__));
+// 		return 1;
+// 	}
+// 	if (unlikely(!mpi_reply)) {
+// 		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
+// 			__FILE__, __LINE__, __func__);
+// 		return 1;
+// 	}
+// 	mpi_request_tm = mpt3sas_base_get_msg_frame(ioc, smid);
+// 	handle = le16_to_cpu(mpi_request_tm->DevHandle);
+// 	if (handle != le16_to_cpu(mpi_reply->DevHandle)) {
+// 		dewtprintk(ioc,
+// 			   ioc_err(ioc, "spurious interrupt: handle(0x%04x:0x%04x), smid(%d)!!!\n",
+// 				   handle,
+// 				   le16_to_cpu(mpi_reply->DevHandle), smid));
+// 		return 0;
+// 	}
 
-	mpt3sas_trigger_master(ioc, MASTER_TRIGGER_TASK_MANAGMENT);
-	dewtprintk(ioc,
-		   ioc_info(ioc, "tr_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x), completed(%d)\n",
-			    handle, smid, le16_to_cpu(mpi_reply->IOCStatus),
-			    le32_to_cpu(mpi_reply->IOCLogInfo),
-			    le32_to_cpu(mpi_reply->TerminationCount)));
+// 	// mpt3sas_trigger_master(ioc, MASTER_TRIGGER_TASK_MANAGMENT);
+// 	dewtprintk(ioc,
+// 		   ioc_info(ioc, "tr_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x), completed(%d)\n",
+// 			    handle, smid, le16_to_cpu(mpi_reply->IOCStatus),
+// 			    le32_to_cpu(mpi_reply->IOCLogInfo),
+// 			    le32_to_cpu(mpi_reply->TerminationCount)));
 
-	smid_sas_ctrl = mpt3sas_base_get_smid(ioc, ioc->tm_sas_control_cb_idx);
-	if (!smid_sas_ctrl) {
-		delayed_sc = kzalloc(sizeof(*delayed_sc), GFP_ATOMIC);
-		if (!delayed_sc)
-			return _scsih_check_for_pending_tm(ioc, smid);
-		INIT_LIST_HEAD(&delayed_sc->list);
-		delayed_sc->handle = le16_to_cpu(mpi_request_tm->DevHandle);
-		list_add_tail(&delayed_sc->list, &ioc->delayed_sc_list);
-		dewtprintk(ioc,
-			   ioc_info(ioc, "DELAYED:sc:handle(0x%04x), (open)\n",
-				    handle));
-		return _scsih_check_for_pending_tm(ioc, smid);
-	}
+// 	smid_sas_ctrl = mpt3sas_base_get_smid(ioc, ioc->tm_sas_control_cb_idx);
+// 	if (!smid_sas_ctrl) {
+// 		delayed_sc = kzalloc(sizeof(*delayed_sc), GFP_ATOMIC);
+// 		if (!delayed_sc)
+// 			return _scsih_check_for_pending_tm(ioc, smid);
+// 		INIT_LIST_HEAD(&delayed_sc->list);
+// 		delayed_sc->handle = le16_to_cpu(mpi_request_tm->DevHandle);
+// 		list_add_tail(&delayed_sc->list, &ioc->delayed_sc_list);
+// 		dewtprintk(ioc,
+// 			   ioc_info(ioc, "DELAYED:sc:handle(0x%04x), (open)\n",
+// 				    handle));
+// 		return _scsih_check_for_pending_tm(ioc, smid);
+// 	}
 
-	dewtprintk(ioc,
-		   ioc_info(ioc, "sc_send:handle(0x%04x), (open), smid(%d), cb(%d)\n",
-			    handle, smid_sas_ctrl, ioc->tm_sas_control_cb_idx));
-	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid_sas_ctrl);
-	memset(mpi_request, 0, sizeof(Mpi2SasIoUnitControlRequest_t));
-	mpi_request->Function = MPI2_FUNCTION_SAS_IO_UNIT_CONTROL;
-	mpi_request->Operation = MPI2_SAS_OP_REMOVE_DEVICE;
-	mpi_request->DevHandle = mpi_request_tm->DevHandle;
-	ioc->put_smid_default(ioc, smid_sas_ctrl);
+// 	dewtprintk(ioc,
+// 		   ioc_info(ioc, "sc_send:handle(0x%04x), (open), smid(%d), cb(%d)\n",
+// 			    handle, smid_sas_ctrl, ioc->tm_sas_control_cb_idx));
+// 	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid_sas_ctrl);
+// 	memset(mpi_request, 0, sizeof(Mpi2SasIoUnitControlRequest_t));
+// 	mpi_request->Function = MPI2_FUNCTION_SAS_IO_UNIT_CONTROL;
+// 	mpi_request->Operation = MPI2_SAS_OP_REMOVE_DEVICE;
+// 	mpi_request->DevHandle = mpi_request_tm->DevHandle;
+// 	ioc->put_smid_default(ioc, smid_sas_ctrl);
 
-	return _scsih_check_for_pending_tm(ioc, smid);
-}
+// 	return _scsih_check_for_pending_tm(ioc, smid);
+// }
 
 /** _scsih_allow_scmd_to_device - check whether scmd needs to
  *				 issue to IOC or not.
@@ -4342,30 +4342,30 @@ inline bool _scsih_allow_scmd_to_device(struct MPT3SAS_ADAPTER *ioc,
  * Return: 1 meaning mf should be freed from _base_interrupt
  *         0 means the mf is freed from this function.
  */
-static u8
-_scsih_sas_control_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid,
-	u8 msix_index, u32 reply)
-{
-	Mpi2SasIoUnitControlReply_t *mpi_reply =
-	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
+// static u8
+// _scsih_sas_control_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid,
+// 	u8 msix_index, u32 reply)
+// {
+// 	Mpi2SasIoUnitControlReply_t *mpi_reply =
+// 	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
 
-	if (likely(mpi_reply)) {
-		dewtprintk(ioc,
-			   ioc_info(ioc, "sc_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x)\n",
-				    le16_to_cpu(mpi_reply->DevHandle), smid,
-				    le16_to_cpu(mpi_reply->IOCStatus),
-				    le32_to_cpu(mpi_reply->IOCLogInfo)));
-		if (le16_to_cpu(mpi_reply->IOCStatus) ==
-		     MPI2_IOCSTATUS_SUCCESS) {
-			clear_bit(le16_to_cpu(mpi_reply->DevHandle),
-			    ioc->device_remove_in_progress);
-		}
-	} else {
-		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
-			__FILE__, __LINE__, __func__);
-	}
-	return mpt3sas_check_for_pending_internal_cmds(ioc, smid);
-}
+// 	if (likely(mpi_reply)) {
+// 		dewtprintk(ioc,
+// 			   ioc_info(ioc, "sc_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x)\n",
+// 				    le16_to_cpu(mpi_reply->DevHandle), smid,
+// 				    le16_to_cpu(mpi_reply->IOCStatus),
+// 				    le32_to_cpu(mpi_reply->IOCLogInfo)));
+// 		if (le16_to_cpu(mpi_reply->IOCStatus) ==
+// 		     MPI2_IOCSTATUS_SUCCESS) {
+// 			clear_bit(le16_to_cpu(mpi_reply->DevHandle),
+// 			    ioc->device_remove_in_progress);
+// 		}
+// 	} else {
+// 		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
+// 			__FILE__, __LINE__, __func__);
+// 	}
+// 	return mpt3sas_check_for_pending_internal_cmds(ioc, smid);
+// }
 
 /**
  * _scsih_tm_tr_volume_send - send target reset request for volumes
@@ -4427,45 +4427,45 @@ _scsih_tm_tr_volume_send(struct MPT3SAS_ADAPTER *ioc, u16 handle)
  * Return: 1 meaning mf should be freed from _base_interrupt
  *         0 means the mf is freed from this function.
  */
-static u8
-_scsih_tm_volume_tr_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid,
-	u8 msix_index, u32 reply)
-{
-	u16 handle;
-	Mpi2SCSITaskManagementRequest_t *mpi_request_tm;
-	Mpi2SCSITaskManagementReply_t *mpi_reply =
-	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
+// static u8
+// _scsih_tm_volume_tr_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid,
+// 	u8 msix_index, u32 reply)
+// {
+// 	u16 handle;
+// 	Mpi2SCSITaskManagementRequest_t *mpi_request_tm;
+// 	Mpi2SCSITaskManagementReply_t *mpi_reply =
+// 	    mpt3sas_base_get_reply_virt_addr(ioc, reply);
 
-	if (ioc->shost_recovery || ioc->pci_error_recovery) {
-		dewtprintk(ioc,
-			   ioc_info(ioc, "%s: host reset in progress!\n",
-				    __func__));
-		return 1;
-	}
-	if (unlikely(!mpi_reply)) {
-		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
-			__FILE__, __LINE__, __func__);
-		return 1;
-	}
+// 	if (ioc->shost_recovery || ioc->pci_error_recovery) {
+// 		dewtprintk(ioc,
+// 			   ioc_info(ioc, "%s: host reset in progress!\n",
+// 				    __func__));
+// 		return 1;
+// 	}
+// 	if (unlikely(!mpi_reply)) {
+// 		ioc_err(ioc, "mpi_reply not valid at %s:%d/%s()!\n",
+// 			__FILE__, __LINE__, __func__);
+// 		return 1;
+// 	}
 
-	mpi_request_tm = mpt3sas_base_get_msg_frame(ioc, smid);
-	handle = le16_to_cpu(mpi_request_tm->DevHandle);
-	if (handle != le16_to_cpu(mpi_reply->DevHandle)) {
-		dewtprintk(ioc,
-			   ioc_err(ioc, "spurious interrupt: handle(0x%04x:0x%04x), smid(%d)!!!\n",
-				   handle, le16_to_cpu(mpi_reply->DevHandle),
-				   smid));
-		return 0;
-	}
+// 	mpi_request_tm = mpt3sas_base_get_msg_frame(ioc, smid);
+// 	handle = le16_to_cpu(mpi_request_tm->DevHandle);
+// 	if (handle != le16_to_cpu(mpi_reply->DevHandle)) {
+// 		dewtprintk(ioc,
+// 			   ioc_err(ioc, "spurious interrupt: handle(0x%04x:0x%04x), smid(%d)!!!\n",
+// 				   handle, le16_to_cpu(mpi_reply->DevHandle),
+// 				   smid));
+// 		return 0;
+// 	}
 
-	dewtprintk(ioc,
-		   ioc_info(ioc, "tr_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x), completed(%d)\n",
-			    handle, smid, le16_to_cpu(mpi_reply->IOCStatus),
-			    le32_to_cpu(mpi_reply->IOCLogInfo),
-			    le32_to_cpu(mpi_reply->TerminationCount)));
+// 	dewtprintk(ioc,
+// 		   ioc_info(ioc, "tr_complete:handle(0x%04x), (open) smid(%d), ioc_status(0x%04x), loginfo(0x%08x), completed(%d)\n",
+// 			    handle, smid, le16_to_cpu(mpi_reply->IOCStatus),
+// 			    le32_to_cpu(mpi_reply->IOCLogInfo),
+// 			    le32_to_cpu(mpi_reply->TerminationCount)));
 
-	return _scsih_check_for_pending_tm(ioc, smid);
-}
+// 	return _scsih_check_for_pending_tm(ioc, smid);
+// }
 
 /**
  * _scsih_issue_delayed_event_ack - issue delayed Event ACK messages
@@ -4613,33 +4613,33 @@ mpt3sas_check_for_pending_internal_cmds(struct MPT3SAS_ADAPTER *ioc, u16 smid)
  * Return: 1 meaning mf should be freed from _base_interrupt
  *         0 means the mf is freed from this function.
  */
-static u8
-_scsih_check_for_pending_tm(struct MPT3SAS_ADAPTER *ioc, u16 smid)
-{
-	struct _tr_list *delayed_tr;
+// static u8
+// _scsih_check_for_pending_tm(struct MPT3SAS_ADAPTER *ioc, u16 smid)
+// {
+// 	struct _tr_list *delayed_tr;
 
-	if (!list_empty(&ioc->delayed_tr_volume_list)) {
-		delayed_tr = list_entry(ioc->delayed_tr_volume_list.next,
-		    struct _tr_list, list);
-		mpt3sas_base_free_smid(ioc, smid);
-		_scsih_tm_tr_volume_send(ioc, delayed_tr->handle);
-		list_del(&delayed_tr->list);
-		kfree(delayed_tr);
-		return 0;
-	}
+// 	if (!list_empty(&ioc->delayed_tr_volume_list)) {
+// 		delayed_tr = list_entry(ioc->delayed_tr_volume_list.next,
+// 		    struct _tr_list, list);
+// 		mpt3sas_base_free_smid(ioc, smid);
+// 		_scsih_tm_tr_volume_send(ioc, delayed_tr->handle);
+// 		list_del(&delayed_tr->list);
+// 		kfree(delayed_tr);
+// 		return 0;
+// 	}
 
-	if (!list_empty(&ioc->delayed_tr_list)) {
-		delayed_tr = list_entry(ioc->delayed_tr_list.next,
-		    struct _tr_list, list);
-		mpt3sas_base_free_smid(ioc, smid);
-		_scsih_tm_tr_send(ioc, delayed_tr->handle);
-		list_del(&delayed_tr->list);
-		kfree(delayed_tr);
-		return 0;
-	}
+// 	if (!list_empty(&ioc->delayed_tr_list)) {
+// 		delayed_tr = list_entry(ioc->delayed_tr_list.next,
+// 		    struct _tr_list, list);
+// 		mpt3sas_base_free_smid(ioc, smid);
+// 		_scsih_tm_tr_send(ioc, delayed_tr->handle);
+// 		list_del(&delayed_tr->list);
+// 		kfree(delayed_tr);
+// 		return 0;
+// 	}
 
-	return 1;
-}
+// 	return 1;
+// }
 
 /**
  * _scsih_check_topo_delete_events - sanity check on topo events
@@ -5127,7 +5127,7 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd *scmd)
 	struct MPT3SAS_ADAPTER *ioc = shost_priv(shost);
 	struct MPT3SAS_DEVICE *sas_device_priv_data;
 	struct MPT3SAS_TARGET *sas_target_priv_data;
-	struct _raid_device *raid_device;
+	// struct _raid_device *raid_device;
 	struct request *rq = scsi_cmd_to_rq(scmd);
 	int class;
 	Mpi25SCSIIORequest_t *mpi_request;
@@ -5251,10 +5251,10 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd *scmd)
 	} else
 		ioc->build_zero_len_sge(ioc, &mpi_request->SGL);
 
-	raid_device = sas_target_priv_data->raid_device;
-	if (raid_device && raid_device->direct_io_enabled)
-		mpt3sas_setup_direct_io(ioc, scmd,
-			raid_device, mpi_request);
+	// raid_device = sas_target_priv_data->raid_device;
+	// if (raid_device && raid_device->direct_io_enabled)
+	// 	mpt3sas_setup_direct_io(ioc, scmd,
+	// 		raid_device, mpi_request);
 
 	if (likely(mpi_request->Function == MPI2_FUNCTION_SCSI_IO_REQUEST)) {
 		if (sas_target_priv_data->flags & MPT_TARGET_FASTPATH_IO) {
@@ -5665,7 +5665,7 @@ _scsih_smart_predicted_fault(struct MPT3SAS_ADAPTER *ioc, u16 handle)
 	event_data->ASC = 0x5D;
 	event_data->DevHandle = cpu_to_le16(handle);
 	event_data->SASAddress = cpu_to_le64(sas_target_priv_data->sas_address);
-	mpt3sas_ctl_add_to_event_log(ioc, event_reply);
+	// mpt3sas_ctl_add_to_event_log(ioc, event_reply);
 	kfree(event_reply);
 out:
 	if (sas_device)
@@ -5789,7 +5789,7 @@ _scsih_io_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 		if (data.asc == 0x5D)
 			_scsih_smart_predicted_fault(ioc,
 			    le16_to_cpu(mpi_reply->DevHandle));
-		mpt3sas_trigger_scsi(ioc, data.skey, data.asc, data.ascq);
+		// mpt3sas_trigger_scsi(ioc, data.skey, data.asc, data.ascq);
 
 		if ((ioc->logging_level & MPT_DEBUG_REPLY) &&
 		     ((scmd->sense_buffer[2] == UNIT_ATTENTION) ||
@@ -9970,7 +9970,7 @@ _scsih_mark_responding_raid_device(struct MPT3SAS_ADAPTER *ioc, u64 wwid,
 			 * across the host reset so re-initialize the
 			 * required data for Direct IO
 			 */
-			mpt3sas_init_warpdrive_properties(ioc, raid_device);
+			// mpt3sas_init_warpdrive_properties(ioc, raid_device);
 			spin_lock_irqsave(&ioc->raid_device_lock, flags);
 			if (raid_device->handle == handle) {
 				spin_unlock_irqrestore(&ioc->raid_device_lock,
@@ -10662,11 +10662,11 @@ _mpt3sas_fw_work(struct MPT3SAS_ADAPTER *ioc, struct fw_event_work *fw_event)
 	}
 
 	switch (fw_event->event) {
-	case MPT3SAS_PROCESS_TRIGGER_DIAG:
-		mpt3sas_process_trigger_data(ioc,
-			(struct SL_WH_TRIGGERS_EVENT_DATA_T *)
-			fw_event->event_data);
-		break;
+	// case MPT3SAS_PROCESS_TRIGGER_DIAG:
+	// 	mpt3sas_process_trigger_data(ioc,
+	// 		(struct SL_WH_TRIGGERS_EVENT_DATA_T *)
+	// 		fw_event->event_data);
+	// 	break;
 	case MPT3SAS_REMOVE_UNRESPONDING_DEVICES:
 		while (scsi_host_in_recovery(ioc->shost) ||
 					 ioc->shost_recovery) {
@@ -10813,8 +10813,8 @@ mpt3sas_scsih_event_callback(struct MPT3SAS_ADAPTER *ioc, u8 msix_index,
 
 	event = le16_to_cpu(mpi_reply->Event);
 
-	if (event != MPI2_EVENT_LOG_ENTRY_ADDED)
-		mpt3sas_trigger_event(ioc, event, 0);
+	// if (event != MPI2_EVENT_LOG_ENTRY_ADDED)
+	// 	mpt3sas_trigger_event(ioc, event, 0);
 
 	switch (event) {
 	/* handle these */
@@ -11228,7 +11228,7 @@ static void scsih_remove(struct pci_dev *pdev)
 				&ioc->ioc_pg1_copy);
 	/* release all the volumes */
 	_scsih_ir_shutdown(ioc);
-	mpt3sas_destroy_debugfs(ioc);
+	// mpt3sas_destroy_debugfs(ioc);
 	sas_remove_host(shost);
 	list_for_each_entry_safe(raid_device, next, &ioc->raid_device_list,
 	    list) {
@@ -11700,10 +11700,10 @@ scsih_scan_start(struct Scsi_Host *shost)
 {
 	struct MPT3SAS_ADAPTER *ioc = shost_priv(shost);
 	int rc;
-	if (diag_buffer_enable != -1 && diag_buffer_enable != 0)
-		mpt3sas_enable_diag_buffer(ioc, diag_buffer_enable);
-	else if (ioc->manu_pg11.HostTraceBufferMaxSizeKB != 0)
-		mpt3sas_enable_diag_buffer(ioc, 1);
+	// if (diag_buffer_enable != -1 && diag_buffer_enable != 0)
+	// 	mpt3sas_enable_diag_buffer(ioc, diag_buffer_enable);
+	// else if (ioc->manu_pg11.HostTraceBufferMaxSizeKB != 0)
+	// 	mpt3sas_enable_diag_buffer(ioc, 1);
 
 	if (disable_discovery > 0)
 		return;
@@ -11878,8 +11878,8 @@ static struct scsi_host_template mpt2sas_driver_template = {
 	.sg_tablesize			= MPT2SAS_SG_DEPTH,
 	.max_sectors			= 32767,
 	.cmd_per_lun			= 7,
-	.shost_attrs			= mpt3sas_host_attrs,
-	.sdev_attrs			= mpt3sas_dev_attrs,
+	// .shost_attrs			= mpt3sas_host_attrs,
+	// .sdev_attrs			= mpt3sas_dev_attrs,
 	.track_queue_depth		= 1,
 	.cmd_size			= sizeof(struct scsiio_tracker),
 };
@@ -11917,8 +11917,8 @@ static struct scsi_host_template mpt3sas_driver_template = {
 	.max_sectors			= 32767,
 	.max_segment_size		= 0xffffffff,
 	.cmd_per_lun			= 7,
-	.shost_attrs			= mpt3sas_host_attrs,
-	.sdev_attrs			= mpt3sas_dev_attrs,
+	// .shost_attrs			= mpt3sas_host_attrs,
+	// .sdev_attrs			= mpt3sas_dev_attrs,
 	.track_queue_depth		= 1,
 	.cmd_size			= sizeof(struct scsiio_tracker),
 	.map_queues			= scsih_map_queues,
@@ -12286,9 +12286,9 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		else if (ioc->mfg_pg10_hide_flag ==  MFG_PAGE10_HIDE_ALL_DISKS)
 			ioc->hide_drives = 1;
 		else {
-			if (mpt3sas_get_num_volumes(ioc))
-				ioc->hide_drives = 1;
-			else
+			// if (mpt3sas_get_num_volumes(ioc))
+			// 	ioc->hide_drives = 1;
+			// else
 				ioc->hide_drives = 0;
 		}
 	} else
@@ -12318,7 +12318,7 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	}
 
 	scsi_scan_host(shost);
-	mpt3sas_setup_debugfs(ioc);
+	// mpt3sas_setup_debugfs(ioc);
 	return 0;
 out_add_shost_fail:
 	mpt3sas_base_detach(ioc);
@@ -12743,18 +12743,18 @@ scsih_init(void)
 	    mpt3sas_config_done);
 
 	/* ctl module callback handler */
-	ctl_cb_idx = mpt3sas_base_register_callback_handler(mpt3sas_ctl_done);
+	// ctl_cb_idx = mpt3sas_base_register_callback_handler(mpt3sas_ctl_done);
 
-	tm_tr_cb_idx = mpt3sas_base_register_callback_handler(
-	    _scsih_tm_tr_complete);
+	// tm_tr_cb_idx = mpt3sas_base_register_callback_handler(
+	//     _scsih_tm_tr_complete);
 
-	tm_tr_volume_cb_idx = mpt3sas_base_register_callback_handler(
-	    _scsih_tm_volume_tr_complete);
+	// tm_tr_volume_cb_idx = mpt3sas_base_register_callback_handler(
+	//     _scsih_tm_volume_tr_complete);
 
-	tm_sas_control_cb_idx = mpt3sas_base_register_callback_handler(
-	    _scsih_sas_control_complete);
+	// tm_sas_control_cb_idx = mpt3sas_base_register_callback_handler(
+	//     _scsih_sas_control_complete);
 
-	mpt3sas_init_debugfs();
+	// mpt3sas_init_debugfs();
 	return 0;
 }
 
@@ -12780,13 +12780,13 @@ scsih_exit(void)
 	mpt3sas_base_release_callback_handler(tm_tr_volume_cb_idx);
 	mpt3sas_base_release_callback_handler(tm_sas_control_cb_idx);
 
-/* raid transport support */
-	if (hbas_to_enumerate != 1)
-		raid_class_release(mpt3sas_raid_template);
-	if (hbas_to_enumerate != 2)
-		raid_class_release(mpt2sas_raid_template);
-	sas_release_transport(mpt3sas_transport_template);
-	mpt3sas_exit_debugfs();
+// /* raid transport support */
+// 	if (hbas_to_enumerate != 1)
+// 		raid_class_release(mpt3sas_raid_template);
+// 	if (hbas_to_enumerate != 2)
+// 		raid_class_release(mpt2sas_raid_template);
+// 	sas_release_transport(mpt3sas_transport_template);
+// 	mpt3sas_exit_debugfs();
 }
 
 /**
@@ -12837,7 +12837,7 @@ _mpt3sas_init(void)
 		return error;
 	}
 
-	mpt3sas_ctl_init(hbas_to_enumerate);
+	// mpt3sas_ctl_init(hbas_to_enumerate);
 
 	error = pci_register_driver(&mpt3sas_driver);
 	if (error)
@@ -12856,7 +12856,7 @@ _mpt3sas_exit(void)
 	pr_info("mpt3sas version %s unloading\n",
 				MPT3SAS_DRIVER_VERSION);
 
-	mpt3sas_ctl_exit(hbas_to_enumerate);
+	// mpt3sas_ctl_exit(hbas_to_enumerate);
 
 	pci_unregister_driver(&mpt3sas_driver);
 

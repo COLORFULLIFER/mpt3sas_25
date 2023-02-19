@@ -52,10 +52,10 @@
 #define NUM_VALID_ENTRIES               (20)
 
 /* trigger types */
-#define MPT3SAS_TRIGGER_MASTER          (1)
-#define MPT3SAS_TRIGGER_EVENT           (2)
-#define MPT3SAS_TRIGGER_SCSI            (3)
-#define MPT3SAS_TRIGGER_MPI             (4)
+// #define MPT3SAS_TRIGGER_MASTER          (1)
+// #define MPT3SAS_TRIGGER_EVENT           (2)
+// #define MPT3SAS_TRIGGER_SCSI            (3)
+// #define MPT3SAS_TRIGGER_MPI             (4)
 
 /* trigger names */
 #define MASTER_TRIGGER_FILE_NAME        "diag_trigger_master"

@@ -1623,7 +1623,7 @@ struct MPT3SAS_ADAPTER {
 	u16		device_remove_in_progress_sz;
 	u8		is_gen35_ioc;
 	u8		is_aero_ioc;
-	struct dentry	*debugfs_root;
+	// struct dentry	*debugfs_root;
 	struct dentry	*ioc_dump;
 	PUT_SMID_IO_FP_HIP put_smid_scsi_io;
 	PUT_SMID_IO_FP_HIP put_smid_fast_path;
@@ -1635,10 +1635,10 @@ struct MPT3SAS_ADAPTER {
 	struct list_head port_table_list;
 };
 
-struct mpt3sas_debugfs_buffer {
-	void	*buf;
-	u32	len;
-};
+// struct mpt3sas_debugfs_buffer {
+// 	void	*buf;
+// 	u32	len;
+// };
 
 #define MPT_DRV_SUPPORT_BITMAP_MEMMOVE 0x00000001
 #define MPT_DRV_SUPPORT_BITMAP_ADDNLQUERY	0x00000002
@@ -1939,22 +1939,22 @@ mpt3sas_config_update_driver_trigger_pg4(struct MPT3SAS_ADAPTER *ioc,
 	struct SL_WH_MPI_TRIGGERS_T *mpi_tg, bool set);
 
 /* ctl shared API */
-extern struct device_attribute *mpt3sas_host_attrs[];
-extern struct device_attribute *mpt3sas_dev_attrs[];
-void mpt3sas_ctl_init(ushort hbas_to_enumerate);
-void mpt3sas_ctl_exit(ushort hbas_to_enumerate);
-u8 mpt3sas_ctl_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
-	u32 reply);
-void mpt3sas_ctl_pre_reset_handler(struct MPT3SAS_ADAPTER *ioc);
-void mpt3sas_ctl_clear_outstanding_ioctls(struct MPT3SAS_ADAPTER *ioc);
-void mpt3sas_ctl_reset_done_handler(struct MPT3SAS_ADAPTER *ioc);
-u8 mpt3sas_ctl_event_callback(struct MPT3SAS_ADAPTER *ioc,
-	u8 msix_index, u32 reply);
-void mpt3sas_ctl_add_to_event_log(struct MPT3SAS_ADAPTER *ioc,
-	Mpi2EventNotificationReply_t *mpi_reply);
+// extern struct device_attribute *mpt3sas_host_attrs[];
+// extern struct device_attribute *mpt3sas_dev_attrs[];
+// void mpt3sas_ctl_init(ushort hbas_to_enumerate);
+// void mpt3sas_ctl_exit(ushort hbas_to_enumerate);
+// u8 mpt3sas_ctl_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
+// 	u32 reply);
+// void mpt3sas_ctl_pre_reset_handler(struct MPT3SAS_ADAPTER *ioc);
+// void mpt3sas_ctl_clear_outstanding_ioctls(struct MPT3SAS_ADAPTER *ioc);
+// void mpt3sas_ctl_reset_done_handler(struct MPT3SAS_ADAPTER *ioc);
+// u8 mpt3sas_ctl_event_callback(struct MPT3SAS_ADAPTER *ioc,
+// 	u8 msix_index, u32 reply);
+// void mpt3sas_ctl_add_to_event_log(struct MPT3SAS_ADAPTER *ioc,
+// 	Mpi2EventNotificationReply_t *mpi_reply);
 
-void mpt3sas_enable_diag_buffer(struct MPT3SAS_ADAPTER *ioc,
-	u8 bits_to_register);
+// void mpt3sas_enable_diag_buffer(struct MPT3SAS_ADAPTER *ioc,
+// 	u8 bits_to_register);
 int mpt3sas_send_diag_release(struct MPT3SAS_ADAPTER *ioc, u8 buffer_type,
 	u8 *issue_reset);
 
@@ -1986,32 +1986,32 @@ mpt3sas_transport_add_phy_to_an_existing_port(struct MPT3SAS_ADAPTER *ioc,
 /* trigger data externs */
 void mpt3sas_send_trigger_data_event(struct MPT3SAS_ADAPTER *ioc,
 	struct SL_WH_TRIGGERS_EVENT_DATA_T *event_data);
-void mpt3sas_process_trigger_data(struct MPT3SAS_ADAPTER *ioc,
-	struct SL_WH_TRIGGERS_EVENT_DATA_T *event_data);
-void mpt3sas_trigger_master(struct MPT3SAS_ADAPTER *ioc,
-	u32 trigger_bitmask);
-void mpt3sas_trigger_event(struct MPT3SAS_ADAPTER *ioc, u16 event,
-	u16 log_entry_qualifier);
-void mpt3sas_trigger_scsi(struct MPT3SAS_ADAPTER *ioc, u8 sense_key,
-	u8 asc, u8 ascq);
-void mpt3sas_trigger_mpi(struct MPT3SAS_ADAPTER *ioc, u16 ioc_status,
-	u32 loginfo);
+// void mpt3sas_process_trigger_data(struct MPT3SAS_ADAPTER *ioc,
+// 	struct SL_WH_TRIGGERS_EVENT_DATA_T *event_data);
+// void mpt3sas_trigger_master(struct MPT3SAS_ADAPTER *ioc,
+// 	u32 trigger_bitmask);
+// void mpt3sas_trigger_event(struct MPT3SAS_ADAPTER *ioc, u16 event,
+// 	u16 log_entry_qualifier);
+// void mpt3sas_trigger_scsi(struct MPT3SAS_ADAPTER *ioc, u8 sense_key,
+// 	u8 asc, u8 ascq);
+// void mpt3sas_trigger_mpi(struct MPT3SAS_ADAPTER *ioc, u16 ioc_status,
+// 	u32 loginfo);
 
 /* warpdrive APIs */
-u8 mpt3sas_get_num_volumes(struct MPT3SAS_ADAPTER *ioc);
-void mpt3sas_init_warpdrive_properties(struct MPT3SAS_ADAPTER *ioc,
-	struct _raid_device *raid_device);
-void
-mpt3sas_setup_direct_io(struct MPT3SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
-	struct _raid_device *raid_device, Mpi25SCSIIORequest_t *mpi_request);
+// u8 mpt3sas_get_num_volumes(struct MPT3SAS_ADAPTER *ioc);
+// void mpt3sas_init_warpdrive_properties(struct MPT3SAS_ADAPTER *ioc,
+// 	struct _raid_device *raid_device);
+// void
+// mpt3sas_setup_direct_io(struct MPT3SAS_ADAPTER *ioc, struct scsi_cmnd *scmd,
+// 	struct _raid_device *raid_device, Mpi25SCSIIORequest_t *mpi_request);
 
 /* NCQ Prio Handling Check */
 bool scsih_ncq_prio_supp(struct scsi_device *sdev);
 
-void mpt3sas_setup_debugfs(struct MPT3SAS_ADAPTER *ioc);
-void mpt3sas_destroy_debugfs(struct MPT3SAS_ADAPTER *ioc);
-void mpt3sas_init_debugfs(void);
-void mpt3sas_exit_debugfs(void);
+// void mpt3sas_setup_debugfs(struct MPT3SAS_ADAPTER *ioc);
+// void mpt3sas_destroy_debugfs(struct MPT3SAS_ADAPTER *ioc);
+// void mpt3sas_init_debugfs(void);
+// void mpt3sas_exit_debugfs(void);
 
 /**
  * _scsih_is_pcie_scsi_device - determines if device is an pcie scsi device

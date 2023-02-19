@@ -1402,10 +1402,10 @@ _base_display_reply_info(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
 		_base_sas_log_info(ioc, loginfo);
 	}
 
-	if (ioc_status || loginfo) {
-		ioc_status &= MPI2_IOCSTATUS_MASK;
-		mpt3sas_trigger_mpi(ioc, ioc_status, loginfo);
-	}
+	// if (ioc_status || loginfo) {
+	// 	ioc_status &= MPI2_IOCSTATUS_MASK;
+	// 	mpt3sas_trigger_mpi(ioc, ioc_status, loginfo);
+	// }
 }
 
 /**
@@ -1503,7 +1503,7 @@ _base_async_event(struct MPT3SAS_ADAPTER *ioc, u8 msix_index, u32 reply)
 	mpt3sas_scsih_event_callback(ioc, msix_index, reply);
 
 	/* ctl callback handler */
-	mpt3sas_ctl_event_callback(ioc, msix_index, reply);
+	// mpt3sas_ctl_event_callback(ioc, msix_index, reply);
 
 	return 1;
 }
@@ -8517,7 +8517,7 @@ mpt3sas_base_detach(struct MPT3SAS_ADAPTER *ioc)
 static void _base_pre_reset_handler(struct MPT3SAS_ADAPTER *ioc)
 {
 	mpt3sas_scsih_pre_reset_handler(ioc);
-	mpt3sas_ctl_pre_reset_handler(ioc);
+	// mpt3sas_ctl_pre_reset_handler(ioc);
 	dtmprintk(ioc, ioc_info(ioc, "%s: MPT3_IOC_PRE_RESET\n", __func__));
 }
 
@@ -8567,7 +8567,7 @@ _base_clear_outstanding_mpt_commands(struct MPT3SAS_ADAPTER *ioc)
 static void _base_clear_outstanding_commands(struct MPT3SAS_ADAPTER *ioc)
 {
 	mpt3sas_scsih_clear_outstanding_scsi_tm_commands(ioc);
-	mpt3sas_ctl_clear_outstanding_ioctls(ioc);
+	// mpt3sas_ctl_clear_outstanding_ioctls(ioc);
 	_base_clear_outstanding_mpt_commands(ioc);
 }
 
@@ -8578,7 +8578,7 @@ static void _base_clear_outstanding_commands(struct MPT3SAS_ADAPTER *ioc)
 static void _base_reset_done_handler(struct MPT3SAS_ADAPTER *ioc)
 {
 	mpt3sas_scsih_reset_done_handler(ioc);
-	mpt3sas_ctl_reset_done_handler(ioc);
+	// mpt3sas_ctl_reset_done_handler(ioc);
 	dtmprintk(ioc, ioc_info(ioc, "%s: MPT3_IOC_DONE_RESET\n", __func__));
 }
 
@@ -8785,13 +8785,13 @@ mpt3sas_base_hard_reset_handler(struct MPT3SAS_ADAPTER *ioc,
 	mpt3sas_base_resume_mq_polling(ioc);
 
  out_unlocked:
-	if ((r == 0) && is_trigger) {
-		if (is_fault)
-			mpt3sas_trigger_master(ioc, MASTER_TRIGGER_FW_FAULT);
-		else
-			mpt3sas_trigger_master(ioc,
-			    MASTER_TRIGGER_ADAPTER_RESET);
-	}
+	// if ((r == 0) && is_trigger) {
+	// 	if (is_fault)
+	// 		mpt3sas_trigger_master(ioc, MASTER_TRIGGER_FW_FAULT);
+	// 	else
+	// 		mpt3sas_trigger_master(ioc,
+	// 		    MASTER_TRIGGER_ADAPTER_RESET);
+	// }
 	dtmprintk(ioc, ioc_info(ioc, "%s: exit\n", __func__));
 	return r;
 }

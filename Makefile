@@ -15,8 +15,7 @@
 
 ifneq  ($(KERNELRELEASE),)
 	obj-m += mpt3sas_1.o
-	mpt3sas_1-objs := mpt3sas_base.o mpt3sas_config.o mpt3sas_scsih.o mpt3sas_transport.o mpt3sas_ctl.o mpt3sas_trigger_diag.o mpt3sas_warpdrive.o mpt3sas_debugfs.o
-	#CC += -g -DDEBUG
+	mpt3sas_1-objs := mpt3sas_base.o mpt3sas_config.o mpt3sas_scsih.o mpt3sas_transport.o
 else
 	KERNEL_DIR = /lib/modules/$(shell uname -r)/build
 endif
